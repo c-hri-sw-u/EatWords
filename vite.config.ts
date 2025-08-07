@@ -46,7 +46,7 @@ export default defineConfig(async () => {
     },
     //默认是'',导致只能在一级域名下使用。
     // GitHub Pages需要根据仓库名设置base
-    base: process.env.NODE_ENV === 'production' ? '/TypeWords/' : './',
+    base: process.env.NODE_ENV === 'production' ? '/EatWords/' : './',
     resolve: {
       alias: {
         "@": pathResolve("src"),

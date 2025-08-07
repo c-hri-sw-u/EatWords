@@ -14,7 +14,7 @@
 
 ## 📋 项目说明
 
-本项目是 [TypeWords](https://github.com/zyronon/TypeWords) 的增强版本，基于原项目进行功能扩展。
+本项目是 [TypeWords](https://github.com/zyronon/TypeWords) 的修改版本，基于原项目进行功能扩展。
 
 ### 📄 版权声明
 
@@ -48,7 +48,7 @@
 
 ## 📸 在线访问
 
-Github Pages: <https://c-hri-sw-u.github.io/TypeWords/>
+Github Pages: <https://c-hri-sw-u.github.io/EatWords/>
 
 
 ---

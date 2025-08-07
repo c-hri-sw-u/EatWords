@@ -1,4 +1,4 @@
-# TypeWords GitHub Pages 部署指南
+# EatWords GitHub Pages 部署指南
 
 ## 🚀 自动部署
 
@@ -22,7 +22,7 @@
 
 3. **等待构建完成**
    - GitHub Actions会自动构建项目
-   - 构建完成后，网站将在 `https://yourusername.github.io/TypeWords/` 访问
+   - 构建完成后，网站将在 `https://yourusername.github.io/EatWords/` 访问
 
 ## 🔧 本地构建测试
 
@@ -52,5 +52,5 @@ pnpm run preview
 
 - 项目使用pnpm作为包管理器
 - 构建输出在 `dist` 目录
-- 生产环境base URL设置为 `/TypeWords/`
+- 生产环境base URL设置为 `/EatWords/`
 - `.nojekyll` 文件防止Jekyll处理 

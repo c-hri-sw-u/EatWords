@@ -28,7 +28,7 @@ const settingStore = useSettingStore()
       </IconWrapper>
     </Tooltip>
 
-    <a href="https://github.com/c-hri-sw-u/TypeWords" target="_blank">
+    <a href="https://github.com/c-hri-sw-u/EatWords" target="_blank">
       <BaseIcon
           title="Github地址"
           icon="mdi:github"/>
