@@ -45,7 +45,8 @@ export default defineConfig(async () => {
       LATEST_COMMIT_HASH: JSON.stringify(latestCommitHash + (process.env.NODE_ENV === 'production' ? '' : ' (dev)')),
     },
     //默认是'',导致只能在一级域名下使用。
-    base: './',
+    // GitHub Pages需要根据仓库名设置base
+    base: process.env.NODE_ENV === 'production' ? '/TypeWords/' : './',
     resolve: {
       alias: {
         "@": pathResolve("src"),
