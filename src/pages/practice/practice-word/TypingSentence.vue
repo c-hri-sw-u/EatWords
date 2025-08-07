@@ -29,6 +29,34 @@ let showFullSentence = $ref(false)
 let waitNext = $ref(false)
 let inputLock = false
 
+// 标准化引号字符，让不同形态的引号能够互相匹配
+function normalizeQuote(char: string): string {
+  const quoteMap: { [key: string]: string } = {
+    // 单引号 - 所有变体都映射到标准英文单引号
+    "'": "'",  // 英文单引号 (U+0027)
+    "'": "'",  // 中文单引号（左）(U+2018)
+    "'": "'",  // 中文单引号（右）(U+2019)
+    "'": "'",  // 其他单引号变体 (U+201A)
+    "'": "'",  // 其他单引号变体 (U+201B)
+    "'": "'",  // 其他单引号变体 (U+2032)
+    "'": "'",  // 其他单引号变体 (U+2035)
+    "'": "'",  // 其他单引号变体 (U+2039)
+    "'": "'",  // 其他单引号变体 (U+203A)
+    // 双引号 - 所有变体都映射到标准英文双引号
+    '"': '"',  // 英文双引号 (U+0022)
+    '"': '"',  // 中文双引号（左）(U+201C)
+    '"': '"',  // 中文双引号（右）(U+201D)
+    '"': '"',  // 其他双引号变体 (U+201E)
+    '"': '"',  // 其他双引号变体 (U+201F)
+    '"': '"',  // 其他双引号变体 (U+2033)
+    '"': '"',  // 其他双引号变体 (U+2036)
+    '"': '"',  // 其他双引号变体 (U+2037)
+    '"': '"',  // 其他双引号变体 (U+2038)
+  }
+  
+  return quoteMap[char] || char
+}
+
 const settingStore = useSettingStore()
 
 const playBeep = usePlayBeep()
@@ -139,12 +167,29 @@ async function onTyping(e: KeyboardEvent) {
   let isTypingRight = false
   let isSentenceRight = false
   
+  // 获取当前应该输入的字符
+  const expectedChar = props.sentence[input.length]
+  
   if (settingStore.ignoreCase) {
-    isTypingRight = letter.toLowerCase() === props.sentence[input.length].toLowerCase()
-    isSentenceRight = (input + letter).toLowerCase() === props.sentence.toLowerCase()
+    // 忽略大小写，同时标准化引号
+    const normalizedLetter = normalizeQuote(letter.toLowerCase())
+    const normalizedExpected = normalizeQuote(expectedChar.toLowerCase())
+    isTypingRight = normalizedLetter === normalizedExpected
+    
+    // 对于完整句子比较，也需要标准化引号
+    const normalizedInput = (input + letter).toLowerCase().split('').map(normalizeQuote).join('')
+    const normalizedSentence = props.sentence.toLowerCase().split('').map(normalizeQuote).join('')
+    isSentenceRight = normalizedInput === normalizedSentence
   } else {
-    isTypingRight = letter === props.sentence[input.length]
-    isSentenceRight = (input + letter) === props.sentence
+    // 不忽略大小写，但标准化引号
+    const normalizedLetter = normalizeQuote(letter)
+    const normalizedExpected = normalizeQuote(expectedChar)
+    isTypingRight = normalizedLetter === normalizedExpected
+    
+    // 对于完整句子比较，也需要标准化引号
+    const normalizedInput = (input + letter).split('').map(normalizeQuote).join('')
+    const normalizedSentence = props.sentence.split('').map(normalizeQuote).join('')
+    isSentenceRight = normalizedInput === normalizedSentence
   }
   
   if (isTypingRight) {
@@ -153,6 +198,12 @@ async function onTyping(e: KeyboardEvent) {
     wrongIndex = -1
     playKeyboardAudio()
   } else {
+    // 调试信息：显示引号标准化过程
+    if (letter !== expectedChar && (letter.includes("'") || letter.includes('"') || expectedChar.includes("'") || expectedChar.includes('"'))) {
+      console.log(`引号不匹配: 输入="${letter}" (${letter.charCodeAt(0)}) 期望="${expectedChar}" (${expectedChar.charCodeAt(0)})`)
+      console.log(`标准化后: 输入="${normalizeQuote(letter)}" 期望="${normalizeQuote(expectedChar)}"`)
+    }
+    
     emit('wrong')
     wrongChar = letter
     wrongIndex = input.length
