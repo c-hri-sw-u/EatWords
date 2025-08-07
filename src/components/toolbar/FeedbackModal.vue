@@ -23,7 +23,7 @@ const emit = defineEmits([
         </span>
         <div class="options">
           <BaseButton>
-            <a :href="`${GITHUB}/issues/new`"
+            <a :href="`${GITHUB}/issues`"
                target="_blank">Issue</a>
           </BaseButton>
         </div>
