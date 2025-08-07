@@ -30,6 +30,8 @@ export interface SettingState {
   waitTimeForChangeWord: number
   autoNext: boolean
   dictationShowWordLength: boolean//默写时显示单词长度，即用下划线 _ 来显示每个字符
+  enableSentencePractice: boolean // 是否启用例句练习
+  aiModel: 'deepseek' | 'qwen' // AI模型选择
   fontSize: {
     articleForeignFontSize: number,
     articleTranslateFontSize: number,
@@ -79,6 +81,8 @@ export const DefaultSettingState = (): SettingState => ({
   waitTimeForChangeWord: 300,
   autoNext: true,
   dictationShowWordLength: true,
+  enableSentencePractice: true, // 默认启用例句练习
+  aiModel: 'deepseek', // 默认使用DeepSeek模型
   theme: 'auto',
   collapse: false,
   chapterWordNumber: DefaultChapterWordNumber,

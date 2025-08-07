@@ -8,8 +8,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Add: typeof import('./src/components/toolbar/Add.vue')['default']
+    ApiKeyDialog: typeof import('./src/components/dialog/ApiKeyDialog.vue')['default']
     ArticleContentDialog: typeof import('./src/components/dialog/ArticleContentDialog.vue')['default']
     ArticleList: typeof import('./src/components/list/ArticleList.vue')['default']
+    AudioEnableNotice: typeof import('./src/components/AudioEnableNotice.vue')['default']
     Backgorund: typeof import('./src/components/Backgorund.vue')['default']
     BaseButton: typeof import('./src/components/BaseButton.vue')['default']
     BaseIcon: typeof import('./src/components/BaseIcon.vue')['default']
@@ -33,6 +35,7 @@ declare module 'vue' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
+    ElLoading: typeof import('element-plus/es')['ElLoading']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElProgress: typeof import('element-plus/es')['ElProgress']
     ElRadio: typeof import('element-plus/es')['ElRadio']

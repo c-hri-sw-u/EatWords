@@ -16,6 +16,7 @@ import {SAVE_SETTING_KEY, SAVE_DICT_KEY} from "@/utils/const.ts";
 import {shakeCommonDict} from "@/utils";
 import router from "@/router.ts";
 import HostNotice from "@/components/HostNotice.vue";
+import AudioEnableNotice from "@/components/AudioEnableNotice.vue";
 
 const store = useBaseStore()
 const runtimeStore = useRuntimeStore()
@@ -87,6 +88,7 @@ onMounted(() => {
   <HostNotice/>
   <ArticleContentDialog/>
   <SettingDialog/>
+  <AudioEnableNotice/>
 </template>
 
 <style scoped lang="scss">

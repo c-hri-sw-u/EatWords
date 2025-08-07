@@ -13,10 +13,12 @@ import Tooltip from "@/components/Tooltip.vue";
 
 interface IProps {
   word: Word,
+  disabled?: boolean,
 }
 
 const props = withDefaults(defineProps<IProps>(), {
   word: () => cloneDeep(DefaultWord),
+  disabled: false,
 })
 
 const emit = defineEmits<{
@@ -80,6 +82,8 @@ function repeat() {
 }
 
 async function onTyping(e: KeyboardEvent) {
+  if (props.disabled) return // 如果被禁用，不响应输入
+  
   if (waitNext) {
     if (e.code === 'Space') {
       emit('next')
@@ -174,7 +178,7 @@ defineExpose({del, showWord, hideWord, play})
 </script>
 
 <template>
-  <div class="typing-word">
+  <div class="typing-word" :class="{ 'disabled': disabled }">
     <div class="translate"
          :style="{
       fontSize: settingStore.fontSize.wordTranslateFontSize +'rem',
@@ -198,7 +202,7 @@ defineExpose({del, showWord, hideWord, play})
     </div>
     <div class="word-wrapper">
       <div class="word"
-           :class="wrong && 'is-wrong'"
+           :class="[wrong && 'is-wrong', disabled && 'completed']"
            :style="{fontSize: settingStore.fontSize.wordForeignFontSize +'rem'}"
       >
         <span class="input" v-if="input">{{ input }}</span>
@@ -293,7 +297,19 @@ defineExpose({del, showWord, hideWord, play})
       &.is-wrong {
         animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
       }
+
+      &.completed {
+        color: var(--color-correct);
+        
+        .input {
+          color: var(--color-correct);
+        }
+      }
     }
+  }
+
+  &.disabled {
+    opacity: 0.6;
   }
 }
 </style>

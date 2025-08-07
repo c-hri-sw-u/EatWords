@@ -9,6 +9,7 @@ import {createI18n} from 'vue-i18n'
 import router from "@/router.ts";
 import VueVirtualScroller from 'vue-virtual-scroller'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import { initAudioOnUserInteraction } from '@/utils/audioContext'
 
 const i18n = createI18n({
   locale: 'zh-CN',
@@ -27,5 +28,8 @@ app.use(VueVirtualScroller)
 app.use(pinia)
 app.use(i18n)
 app.use(router)
+
+// 初始化音频交互检测
+initAudioOnUserInteraction()
 
 app.mount('#app')

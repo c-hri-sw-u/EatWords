@@ -9,6 +9,7 @@ export type Word = {
   "usphone": string,
   "ukphone": string,
   "trans": string[]
+  "sentence"?: string, // 添加例句字段
   checked?: boolean,
   id?: any,
 }
@@ -17,7 +18,8 @@ export const DefaultWord: Word = {
   name: '',
   usphone: '',
   ukphone: '',
-  trans: []
+  trans: [],
+  sentence: '' // 添加默认例句
 }
 
 export const PronunciationApi = 'https://dict.youdao.com/dictvoice?audio='

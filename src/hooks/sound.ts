@@ -5,6 +5,7 @@ import beep from "@/assets/sound/beep.wav";
 import correct from "@/assets/sound/correct.wav";
 import {$ref} from "vue/macros";
 import {SoundFileOptions} from "@/utils/const.ts";
+import { safeAudioPlay } from "@/utils/audioContext";
 
 export function useSound(audioSrcList?: string[], audioFileLength?: number) {
   let audioList: HTMLAudioElement[] = $ref([])
@@ -24,15 +25,14 @@ export function useSound(audioSrcList?: string[], audioFileLength?: number) {
     index = 0
   }
 
-  function play(volume: number = 100) {
+  async function play(volume: number = 100) {
     index++
-    if (audioList.length > 1 && audioList.length !== audioLength) {
-      audioList[index % audioList.length].volume = volume / 100
-      audioList[index % audioList.length].play()
-    } else {
-      audioList[index % audioLength].volume = volume / 100
-      audioList[index % audioLength].play()
-    }
+    const audioToPlay = audioList.length > 1 && audioList.length !== audioLength 
+      ? audioList[index % audioList.length] 
+      : audioList[index % audioLength]
+    
+    audioToPlay.volume = volume / 100
+    await safeAudioPlay(audioToPlay)
   }
 
   return {play, setAudio}
@@ -90,7 +90,7 @@ export function usePlayWordAudio() {
   const settingStore = useSettingStore()
   const audio = $ref(new Audio())
 
-  function playAudio(word: string) {
+  async function playAudio(word: string) {
     if (settingStore.wordSoundType === 'uk') {
       audio.src = `${PronunciationApi}${word}&type=1`
     } else if (settingStore.wordSoundType === 'us') {
@@ -98,7 +98,8 @@ export function usePlayWordAudio() {
     }
     audio.volume = settingStore.wordSoundVolume / 100
     audio.playbackRate = settingStore.wordSoundSpeed
-    audio.play()
+    
+    await safeAudioPlay(audio)
   }
 
   return playAudio
@@ -108,20 +109,37 @@ export function useTTsPlayAudio() {
   let isPlay = $ref(false)
 
   function play(text: string) {
-    // if (isPlay) {
-    //   isPlay = false
-    //   return window.speechSynthesis.pause();
-    // }
-    let msg = new SpeechSynthesisUtterance();
-    msg.text = text
-    msg.rate = 1;
-    msg.pitch = 1;
-    // msg.lang = 'en-US';
-    msg.lang = 'zh-CN';
-    isPlay = true
-    window.speechSynthesis.speak(msg);
-    console.log('text', text)
-
+    try {
+      // if (isPlay) {
+      //   isPlay = false
+      //   return window.speechSynthesis.pause();
+      // }
+      let msg = new SpeechSynthesisUtterance();
+      msg.text = text
+      msg.rate = 1;
+      msg.pitch = 1;
+      // msg.lang = 'en-US';
+      msg.lang = 'zh-CN';
+      
+      // 添加错误处理
+      msg.onerror = (event) => {
+        console.log('TTS blocked by browser policy - user interaction required')
+        isPlay = false
+      }
+      
+      msg.onend = () => {
+        isPlay = false
+      }
+      
+      if (window.speechSynthesis) {
+        isPlay = true
+        window.speechSynthesis.speak(msg);
+        console.log('text', text)
+      }
+    } catch (error) {
+      console.log('TTS failed:', error)
+      isPlay = false
+    }
   }
 
   return play
