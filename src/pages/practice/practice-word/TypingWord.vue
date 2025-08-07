@@ -202,13 +202,15 @@ function next(isTyping: boolean = true) {
     data.index++
     isTyping && practiceStore.inputWordNumber++
     console.log('这个词完了')
+    
+    // 检查当前词是否在跳过列表中
     if (store.skipWordNames.includes(word.name.toLowerCase())) {
+      // 如果当前词在跳过列表中，递归调用next跳过它
       next()
     } else {
-      data.index++
-      isTyping && practiceStore.inputWordNumber++
-      console.log('进入下一个词')
-      if (store.skipWordNames.includes(data.words[data.index].name.toLowerCase())) {
+      // 检查下一个词是否在跳过列表中
+      if (data.index < data.words.length && store.skipWordNames.includes(data.words[data.index].name.toLowerCase())) {
+        // 如果下一个词在跳过列表中，递归调用next跳过它
         next()
       }
     }
