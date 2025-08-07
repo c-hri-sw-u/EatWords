@@ -2,31 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <link rel="icon" type="image/svg+xml" href="./logo.jpg"/>
+    <link rel="icon" type="image/svg+xml" href="/TypeWords/logo.jpg"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Typing Word</title>
     <script>
       +(function () {
         function rem() {
           let html = document.documentElement;
-          let max = parseInt('1920rem');
-          let min = parseInt('1000rem');
+          let max = parseInt('2048rem');
+          let min = parseInt('2048rem');
           let width;
-          if (window.innerWidth > max) {
-            width = max;
-          } else if (window.innerWidth < min) {
+          if (window.innerWidth < min) {
             width = min;
           } else {
             width = window.innerWidth;
           }
+          // console.log('width', width)
           html.style.fontSize = width / max + 'px';
         }
+
         rem();
         window.addEventListener('resize', rem);
       })();
     </script>
-  <script type="module" crossorigin src="./assets/index-dc161a7d.js"></script>
-  <link rel="stylesheet" href="./assets/index-00f38561.css">
+    <script>
+
+    </script>
+    <script>
+      if (!location.href.includes('localhost')
+        && !location.href.includes('192.168')
+        && !location.href.includes('172.16')
+        && !location.href.includes('10.0')
+      ) {
+        var _hmt = _hmt || [];
+        (function () {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?3dae52fcd5375a19905462e4ad3eb54e";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  <script type="module" crossorigin src="/TypeWords/assets/index-1322d1e3.js"></script>
+  <link rel="stylesheet" href="/TypeWords/assets/index-db6c19a1.css">
 </head>
 <body>
 <div id="app"></div>
