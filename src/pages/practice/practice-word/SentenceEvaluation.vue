@@ -230,6 +230,10 @@ onUnmounted(() => {
     font-size: 14rem;
     line-height: 1.6;
     color: var(--color-font-1);
+    max-height: 300rem; // 限制最大高度
+    overflow-y: auto; // 允许滚动
+    word-wrap: break-word; // 长单词换行
+    white-space: pre-wrap; // 保持换行和空格
   }
 
   .evaluation-actions {

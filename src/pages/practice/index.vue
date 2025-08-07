@@ -158,13 +158,14 @@ useStartKeyboardEventListener()
 .practice-wrapper {
   font-size: 13rem;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   //padding-right: var(--practice-wrapper-padding-right);
   transform: translateX(var(--practice-wrapper-translateX));
+  overflow-y: auto; // 允许垂直滚动
 
 
 }

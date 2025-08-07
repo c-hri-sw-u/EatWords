@@ -144,8 +144,9 @@ html, body {
   padding: 0;
   margin: 0;
   width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-x: hidden; // 只隐藏水平滚动
+  overflow-y: auto; // 允许垂直滚动
   color: var(--color-font-1);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;

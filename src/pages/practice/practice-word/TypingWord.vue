@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, watch } from "vue"
+import { onMounted, onUnmounted, watch, nextTick } from "vue"
 import { $computed, $ref } from "vue/macros"
 import { useBaseStore } from "@/stores/base.ts"
 import { DefaultDisplayStatistics, DictType, ShortcutKey, Sort, Word } from "../../../types.ts";
@@ -330,6 +330,22 @@ function onEvaluationContinue() {
   showEvaluation = false
   proceedToNextWord()
 }
+
+// 当评价显示时，自动滚动到可见区域
+watch(() => showEvaluation, (newVal) => {
+  if (newVal) {
+    // 延迟一下确保DOM已更新
+    nextTick(() => {
+      const evaluationElement = document.querySelector('.evaluation-section')
+      if (evaluationElement) {
+        evaluationElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        })
+      }
+    })
+  }
+})
 
 // 进入下一个单词的统一处理
 function proceedToNextWord() {
@@ -902,24 +918,8 @@ onUnmounted(() => {
     flex-direction: column;
     align-items: center;
     gap: 15rem;
-    
-    .section-label {
-      font-size: 16rem;
-      font-weight: 600;
-      color: var(--color-font-1);
-      text-align: center;
-      padding: 8rem 16rem;
-      background: rgba(var(--color-primary-rgb), 0.1);
-      border-radius: 20rem;
-      border: 1px solid rgba(var(--color-primary-rgb), 0.2);
-    }
-  }
-
-  .creation-section, .evaluation-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15rem;
+    width: 100%;
+    max-width: 800rem; // 限制最大宽度
     
     .section-label {
       font-size: 16rem;
