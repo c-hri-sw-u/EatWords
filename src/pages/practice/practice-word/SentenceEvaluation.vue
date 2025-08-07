@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { $computed } from "vue/macros";
 import { Icon } from '@iconify/vue';
+import { onMounted, onUnmounted } from 'vue';
 import BaseButton from "@/components/BaseButton.vue";
 
 interface IProps {
@@ -39,6 +40,28 @@ function continuePractice() {
 function retryCreation() {
   emit('retry')
 }
+
+// 键盘事件处理
+function handleKeyDown(e: KeyboardEvent) {
+  // Ctrl/Cmd + Enter 继续练习
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault()
+    continuePractice()
+  }
+  // Ctrl/Cmd + R 重新造句
+  if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+    e.preventDefault()
+    retryCreation()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown)
+})
 
 </script>
 
@@ -92,6 +115,7 @@ function retryCreation() {
         >
           <Icon icon="mdi:refresh" width="16" />
           重新造句
+          <span class="shortcut-hint">Ctrl+R</span>
         </BaseButton>
         
         <BaseButton 
@@ -101,6 +125,7 @@ function retryCreation() {
         >
           <Icon icon="mdi:arrow-right" width="16" />
           继续练习
+          <span class="shortcut-hint">Ctrl+Enter</span>
         </BaseButton>
       </div>
     </div>
@@ -209,11 +234,18 @@ function retryCreation() {
 
   .evaluation-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: 15rem;
+    gap: 20rem;
     padding-top: 10rem;
     border-top: 1px solid rgba(var(--color-font-2-rgb), 0.1);
+    
+    .shortcut-hint {
+      font-size: 11rem;
+      opacity: 0.7;
+      margin-left: 5rem;
+      font-weight: normal;
+    }
   }
 }
 </style> 

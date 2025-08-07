@@ -166,6 +166,18 @@ async function onTyping(e: KeyboardEvent) {
 
   if (isSentenceRight) {
     playCorrect()
+    
+    // 例句练习完成后再次朗读句子
+    if (props.sentence && settingStore.wordSound) {
+      setTimeout(() => {
+        safeSpeechPlay(props.sentence, {
+          rate: settingStore.wordSoundSpeed || 1,
+          volume: (settingStore.wordSoundVolume || 100) / 100,
+          lang: 'en-US'
+        })
+      }, 300) // 稍微延迟，让正确音效先播放
+    }
+    
     if (settingStore.autoNext) {
       setTimeout(() => emit('complete'), settingStore.waitTimeForChangeWord)
     } else {
