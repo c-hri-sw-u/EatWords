@@ -10,6 +10,7 @@ import { emitter, EventKey } from "@/utils/eventBus.ts";
 import { cloneDeep } from "lodash-es";
 import { onUnmounted, watch, onMounted } from "vue";
 import Tooltip from "@/components/Tooltip.vue";
+import { normalizeQuote, compareStringsIgnoreQuotes } from '@/utils/index';
 
 interface IProps {
   word: Word,
@@ -96,18 +97,43 @@ async function onTyping(e: KeyboardEvent) {
   let letter = e.key
   let isTypingRight = false
   let isWordRight = false
+  
+  // 获取当前应该输入的字符
+  const expectedChar = props.word.name[input.length]
+  
   if (settingStore.ignoreCase) {
-    isTypingRight = letter.toLowerCase() === props.word.name[input.length].toLowerCase()
-    isWordRight = (input + letter).toLowerCase() === props.word.name.toLowerCase()
+    // 忽略大小写，同时标准化引号
+    const normalizedLetter = normalizeQuote(letter.toLowerCase())
+    const normalizedExpected = normalizeQuote(expectedChar.toLowerCase())
+    isTypingRight = normalizedLetter === normalizedExpected
+    
+    // 对于完整单词比较，也需要标准化引号
+    const normalizedInput = (input + letter).toLowerCase().split('').map(normalizeQuote).join('')
+    const normalizedWord = props.word.name.toLowerCase().split('').map(normalizeQuote).join('')
+    isWordRight = normalizedInput === normalizedWord
   } else {
-    isTypingRight = letter === props.word.name[input.length]
-    isWordRight = (input + letter) === props.word.name
+    // 不忽略大小写，但标准化引号
+    const normalizedLetter = normalizeQuote(letter)
+    const normalizedExpected = normalizeQuote(expectedChar)
+    isTypingRight = normalizedLetter === normalizedExpected
+    
+    // 对于完整单词比较，也需要标准化引号
+    const normalizedInput = (input + letter).split('').map(normalizeQuote).join('')
+    const normalizedWord = props.word.name.split('').map(normalizeQuote).join('')
+    isWordRight = normalizedInput === normalizedWord
   }
+  
   if (isTypingRight) {
     input += letter
     wrong = ''
     playKeyboardAudio()
   } else {
+    // 调试信息：显示引号标准化过程
+    if (letter !== expectedChar && (letter.includes("'") || letter.includes('"') || expectedChar.includes("'") || expectedChar.includes('"'))) {
+      console.log(`引号不匹配: 输入="${letter}" (${letter.charCodeAt(0)}) 期望="${expectedChar}" (${expectedChar.charCodeAt(0)})`)
+      console.log(`标准化后: 输入="${normalizeQuote(letter)}" 期望="${normalizeQuote(expectedChar)}"`)
+    }
+    
     emit('wrong')
     wrong = letter
     playKeyboardAudio()

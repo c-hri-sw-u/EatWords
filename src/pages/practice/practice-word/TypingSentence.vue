@@ -6,6 +6,7 @@ import { emitter, EventKey } from "@/utils/eventBus.ts";
 import { onUnmounted, watch, onMounted } from "vue";
 import { Icon } from '@iconify/vue';
 import { safeSpeechPlay } from '@/utils/audioContext';
+import { normalizeQuote, compareStringsIgnoreQuotes } from '@/utils/index';
 
 interface IProps {
   sentence: string,
@@ -28,34 +29,6 @@ let wrongIndex = $ref(-1)
 let showFullSentence = $ref(false)
 let waitNext = $ref(false)
 let inputLock = false
-
-// 标准化引号字符，让不同形态的引号能够互相匹配
-function normalizeQuote(char: string): string {
-  const quoteMap: { [key: string]: string } = {
-    // 单引号 - 所有变体都映射到标准英文单引号
-    "'": "'",  // 英文单引号 (U+0027)
-    "'": "'",  // 中文单引号（左）(U+2018)
-    "'": "'",  // 中文单引号（右）(U+2019)
-    "'": "'",  // 其他单引号变体 (U+201A)
-    "'": "'",  // 其他单引号变体 (U+201B)
-    "'": "'",  // 其他单引号变体 (U+2032)
-    "'": "'",  // 其他单引号变体 (U+2035)
-    "'": "'",  // 其他单引号变体 (U+2039)
-    "'": "'",  // 其他单引号变体 (U+203A)
-    // 双引号 - 所有变体都映射到标准英文双引号
-    '"': '"',  // 英文双引号 (U+0022)
-    '"': '"',  // 中文双引号（左）(U+201C)
-    '"': '"',  // 中文双引号（右）(U+201D)
-    '"': '"',  // 其他双引号变体 (U+201E)
-    '"': '"',  // 其他双引号变体 (U+201F)
-    '"': '"',  // 其他双引号变体 (U+2033)
-    '"': '"',  // 其他双引号变体 (U+2036)
-    '"': '"',  // 其他双引号变体 (U+2037)
-    '"': '"',  // 其他双引号变体 (U+2038)
-  }
-  
-  return quoteMap[char] || char
-}
 
 const settingStore = useSettingStore()
 

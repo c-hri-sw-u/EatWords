@@ -123,3 +123,47 @@ export function shakeCommonDict(n: BaseState): BaseState {
     })
     return data
 }
+
+/**
+ * 标准化引号字符，让不同形态的引号能够互相匹配
+ * @param char 需要标准化的字符
+ * @returns 标准化后的字符
+ */
+export function normalizeQuote(char: string): string {
+  // 使用Unicode码点来确保正确的字符映射
+  const charCode = char.charCodeAt(0)
+  
+  // 单引号标准化 - 所有变体都映射到标准英文单引号 (U+0027)
+  if ([0x0027, 0x2018, 0x2019, 0x201A, 0x201B, 0x2032, 0x2035, 0x2039, 0x203A].includes(charCode)) {
+    return "'"
+  }
+  
+  // 双引号标准化 - 所有变体都映射到标准英文双引号 (U+0022)
+  if ([0x0022, 0x201C, 0x201D, 0x201E, 0x201F, 0x2033, 0x2036, 0x2037, 0x2038].includes(charCode)) {
+    return '"'
+  }
+  
+  return char
+}
+
+/**
+ * 标准化字符串中的所有引号
+ * @param str 需要标准化的字符串
+ * @returns 标准化后的字符串
+ */
+export function normalizeQuotes(str: string): string {
+  return str.split('').map(normalizeQuote).join('')
+}
+
+/**
+ * 比较两个字符串，忽略引号差异
+ * @param str1 第一个字符串
+ * @param str2 第二个字符串
+ * @param ignoreCase 是否忽略大小写
+ * @returns 是否相等
+ */
+export function compareStringsIgnoreQuotes(str1: string, str2: string, ignoreCase: boolean = false): boolean {
+  const normalized1 = normalizeQuotes(ignoreCase ? str1.toLowerCase() : str1)
+  const normalized2 = normalizeQuotes(ignoreCase ? str2.toLowerCase() : str2)
+  return normalized1 === normalized2
+}

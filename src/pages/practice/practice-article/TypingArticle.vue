@@ -15,6 +15,7 @@ import IconWrapper from "@/components/IconWrapper.vue";
 import Tooltip from "@/components/Tooltip.vue";
 import BaseIcon from "@/components/BaseIcon.vue";
 import {useArticleOptions} from "@/hooks/dict.ts";
+import {normalizeQuote} from '@/utils/index';
 
 interface IProps {
   article: Article,
@@ -173,10 +174,23 @@ function onTyping(e: KeyboardEvent) {
 
     let isRight = false
     if (settingStore.ignoreCase) {
-      isRight = key.toLowerCase() === letter.toLowerCase()
+      // 忽略大小写，同时标准化引号
+      const normalizedLetter = normalizeQuote(letter.toLowerCase())
+      const normalizedKey = normalizeQuote(key.toLowerCase())
+      isRight = normalizedLetter === normalizedKey
     } else {
-      isRight = key === letter
+      // 不忽略大小写，但标准化引号
+      const normalizedLetter = normalizeQuote(letter)
+      const normalizedKey = normalizeQuote(key)
+      isRight = normalizedLetter === normalizedKey
     }
+    
+    // 调试信息：显示引号标准化过程
+    if (letter !== key && (letter.includes("'") || letter.includes('"') || key.includes("'") || key.includes('"'))) {
+      console.log(`引号不匹配: 输入="${letter}" (${letter.charCodeAt(0)}) 期望="${key}" (${key.charCodeAt(0)})`)
+      console.log(`标准化后: 输入="${normalizeQuote(letter)}" 期望="${normalizeQuote(key)}"`)
+    }
+    
     if (isRight) {
       input += letter
       wrong = ''

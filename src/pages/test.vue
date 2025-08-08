@@ -1,47 +1,212 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { normalizeQuote, normalizeQuotes, compareStringsIgnoreQuotes } from '@/utils/index'
 
-import {splitEnArticle} from "@/hooks/article.ts";
-import BaseButton from "@/components/BaseButton.vue";
-import {useSettingStore} from "@/stores/setting.ts";
+const testInput = ref('')
+const expectedOutput = ref('')
+const result = ref('')
 
-let data = {
-  "title": "A cold welcome",
-  "titleTranslate": "冷遇",
-  "text": "On Wednesday evening, we went to the Town Hall. It was the last day of the year and a large crowd of people had gathered under the Town Hall clock. It would strike twelve in twenty minutes' time. Fifteen minutes passed and then, at five to twelve, the clock stopped. The big minute hand did not move. We waited and waited, but nothing happened. Suddenly someone shouted. 'It's two minutes past twelve! The clock has stopped!' I looked at my watch. It was true. The big clock refused to welcome the New Year. At that moment, everybody began to laugh and sing.\n",
-  "textCustomTranslate": "星期三的晚上，我们去了市政厅。 那是一年的最后一天，一大群人聚集在市政厅的大钟下面。再过20分钟，大钟将敲响12下。15分钟过去了，而就在11点55分时，大钟停了。那根巨大的分针不动了。 我们等啊等啊，可情况没有变化。突然有人喊道：“已经12点零2分了！那钟已经停了！”我看了一下我的手表，果真如此。那座大钟不愿意迎接新年。此时，大家已经笑了起来，同时唱起了歌。",
-  "textNetworkTranslate": "",
-  "textCustomTranslateIsFormat": false,
-  "useTranslateType": "custom",
-  "newWords": [],
-  "id": "UydP2M"
+const testCases = [
+  { input: "'", expected: "'", description: "英文单引号" },
+  { input: "'", expected: "'", description: "中文单引号（左）" },
+  { input: "'", expected: "'", description: "中文单引号（右）" },
+  { input: '"', expected: '"', description: "英文双引号" },
+  { input: '"', expected: '"', description: "中文双引号（左）" },
+  { input: '"', expected: '"', description: "中文双引号（右）" },
+]
+
+const testStrings = [
+  { str1: "Don't", str2: "Don't", description: "相同引号" },
+  { str1: "Don't", str2: "Don't", description: "不同引号变体" },
+  { str1: "He said \"Hello\"", str2: "He said \"Hello\"", description: "双引号变体" },
+]
+
+function testNormalizeQuote() {
+  console.log('=== 测试单个字符标准化 ===')
+  testCases.forEach(testCase => {
+    const result = normalizeQuote(testCase.input)
+    const isCorrect = result === testCase.expected
+    console.log(`${testCase.description}: "${testCase.input}" -> "${result}" ${isCorrect ? '✓' : '✗'}`)
+  })
 }
-// data =   {
-//   "title": "The best and the worst",
-//   "titleTranslate": "最好的和最差的",
-//   "text": "Joe Sanders has the most beautiful garden in our town. Nearly everybody enters for 'The Nicest Garden Competition' each year, but Joe wins every time. Bill Frith's garden is larger than Joe's. Bill works harder than Joe and grows more flowers and vegetables, but Joe's garden is more interesting. He has made neat paths and has built a wooden bridge over a pool. I like gardens too, but I do not like hard work. Every year I enter for the garden competition too, and I always win a little prize for the worst garden in the town!",
-//   "textCustomTranslate": "乔.桑德斯拥有我们镇上最漂亮的花园。\n几乎每个人都参加每年举办的“最佳花园竞赛”，而每次都是乔获胜。\n比尔.弗里斯的花园比乔的花园大，\n他比乔也更为勤奋，种植的花卉和蔬菜也更多，但乔的花园更富有情趣。\n他修筑了一条条整洁的小路，并在一个池塘上架了一座小木桥。\n我也喜欢花园，但我却不愿意辛勤劳动。\n每年的花园竞赛我也参加，但总因是镇上最劣的花园而获得一个小奖！",
-//   "textNetworkTranslate": "",
-//   "textCustomTranslateIsFormat": true,
-//   "useTranslateType": "custom",
-//   "newWords": [],
-//   "id": "TdAAqD"
-// }
-splitEnArticle(data.text)
-const settingStore = useSettingStore()
+
+function testNormalizeQuotes() {
+  console.log('=== 测试字符串标准化 ===')
+  const testStr = "Don't say \"Hello\""
+  const result = normalizeQuotes(testStr)
+  console.log(`原字符串: "${testStr}"`)
+  console.log(`标准化后: "${result}"`)
+}
+
+function testCompareStrings() {
+  console.log('=== 测试字符串比较 ===')
+  testStrings.forEach(testCase => {
+    const result = compareStringsIgnoreQuotes(testCase.str1, testCase.str2)
+    console.log(`${testCase.description}: "${testCase.str1}" vs "${testCase.str2}" = ${result ? '✓' : '✗'}`)
+  })
+}
+
+function runAllTests() {
+  testNormalizeQuote()
+  testNormalizeQuotes()
+  testCompareStrings()
+}
+
+function testCustomInput() {
+  if (testInput.value && expectedOutput.value) {
+    const normalized = normalizeQuote(testInput.value)
+    result.value = `输入: "${testInput.value}" (${testInput.value.charCodeAt(0)}) -> 标准化: "${normalized}" (${normalized.charCodeAt(0)}) -> 期望: "${expectedOutput.value}" (${expectedOutput.value.charCodeAt(0)})`
+  }
+}
 </script>
 
 <template>
-  <div class="page">
-    test
-    <BaseButton @click="settingStore.load = !settingStore.load">test</BaseButton>
+  <div class="test-page">
+    <h1>引号标准化测试</h1>
+    
+    <div class="test-section">
+      <h2>运行所有测试</h2>
+      <button @click="runAllTests">运行测试</button>
+      <p>查看控制台输出结果</p>
+    </div>
+    
+    <div class="test-section">
+      <h2>自定义测试</h2>
+      <div class="input-group">
+        <label>输入字符:</label>
+        <input v-model="testInput" placeholder="输入要测试的字符" />
+      </div>
+      <div class="input-group">
+        <label>期望输出:</label>
+        <input v-model="expectedOutput" placeholder="期望的标准化结果" />
+      </div>
+      <button @click="testCustomInput">测试</button>
+      <div v-if="result" class="result">
+        {{ result }}
+      </div>
+    </div>
+    
+    <div class="test-section">
+      <h2>测试用例</h2>
+      <div class="test-cases">
+        <div v-for="testCase in testCases" :key="testCase.description" class="test-case">
+          <div class="test-info">
+            <span class="description">{{ testCase.description }}</span>
+            <span class="input">输入: "{{ testCase.input }}"</span>
+            <span class="expected">期望: "{{ testCase.expected }}"</span>
+            <span class="result">结果: "{{ normalizeQuote(testCase.input) }}"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="test-section">
+      <h2>字符串比较测试</h2>
+      <div class="test-cases">
+        <div v-for="testCase in testStrings" :key="testCase.description" class="test-case">
+          <div class="test-info">
+            <span class="description">{{ testCase.description }}</span>
+            <span class="input">字符串1: "{{ testCase.str1 }}"</span>
+            <span class="input">字符串2: "{{ testCase.str2 }}"</span>
+            <span class="result">比较结果: {{ compareStringsIgnoreQuotes(testCase.str1, testCase.str2) ? '匹配' : '不匹配' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.page {
-  position: relative;
-  z-index: 1;
-  font-size: 14rem;
-  color: black;
+.test-page {
+  padding: 20rem;
+  max-width: 800rem;
+  margin: 0 auto;
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 30rem;
+  }
+  
+  .test-section {
+    margin-bottom: 30rem;
+    padding: 20rem;
+    border: 1px solid var(--color-item-border);
+    border-radius: var(--radius);
+    
+    h2 {
+      margin-bottom: 15rem;
+      color: var(--color-font-2);
+    }
+    
+    button {
+      padding: 10rem 20rem;
+      background: var(--color-main-active);
+      color: white;
+      border: none;
+      border-radius: 4rem;
+      cursor: pointer;
+      margin-right: 10rem;
+      
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+    
+    .input-group {
+      margin-bottom: 15rem;
+      
+      label {
+        display: block;
+        margin-bottom: 5rem;
+        color: var(--color-font-1);
+      }
+      
+      input {
+        width: 100%;
+        padding: 8rem;
+        border: 1px solid var(--color-item-border);
+        border-radius: 4rem;
+        font-family: monospace;
+      }
+    }
+    
+    .result {
+      margin-top: 15rem;
+      padding: 10rem;
+      background: var(--color-item-bg);
+      border-radius: 4rem;
+      font-family: monospace;
+      font-size: 14rem;
+    }
+  }
+  
+  .test-cases {
+    .test-case {
+      margin-bottom: 15rem;
+      padding: 10rem;
+      background: var(--color-item-bg);
+      border-radius: 4rem;
+      
+      .test-info {
+        display: flex;
+        flex-direction: column;
+        gap: 5rem;
+        
+        .description {
+          font-weight: bold;
+          color: var(--color-font-2);
+        }
+        
+        .input, .expected, .result {
+          font-family: monospace;
+          font-size: 14rem;
+        }
+        
+        .result {
+          color: var(--color-main-active);
+        }
+      }
+    }
+  }
 }
 </style>
