@@ -21,6 +21,7 @@ import {cloneDeep} from "lodash-es";
 import WordList from "@/components/list/WordList.vue";
 import ArticleList from "@/components/list/ArticleList.vue";
 import Slide from "@/components/Slide.vue";
+import MobileStats from "./MobileStats.vue";
 
 const router = useRouter()
 const store = useBaseStore()
@@ -93,9 +94,10 @@ const showCollectToggleButton = $computed(() => {
         <div class="tab" :class="tabIndex === 1 && 'active'" @click="tabIndex = 1">{{ store.collect.name }}</div>
         <div class="tab" :class="tabIndex === 2 && 'active'" @click="tabIndex = 2">{{ store.simple.name }}</div>
         <div class="tab" :class="tabIndex === 3 && 'active'" @click="tabIndex = 3">{{ store.wrong.name }}</div>
+        <div class="tab" :class="tabIndex === 4 && 'active'" @click="tabIndex = 4">统计</div>
       </div>
     </header>
-    <Slide :slide-count="4" :step="tabIndex">
+    <Slide :slide-count="5" :step="tabIndex">
       <div class="slide-item">
         <slot :active="tabIndex === 0 && settingStore.showPanel"></slot>
       </div>
@@ -103,7 +105,7 @@ const showCollectToggleButton = $computed(() => {
         <div class="panel-page-item">
           <div class="list-header">
             <div class="left">
-              <div class="dict-name">总词数：{{ store.collect.words.length }}</div>
+              <div class="dict-name">收藏词数：{{ store.collect.words.length }}</div>
               <BaseIcon icon="fluent:add-12-regular" title="添加" @click="addCollect"/>
             </div>
             <template v-if="showCollectToggleButton">
@@ -127,13 +129,14 @@ const showCollectToggleButton = $computed(() => {
                   icon="solar:trash-bin-minimalistic-linear"/>
             </template>
           </WordList>
+          <Empty v-else/>
         </div>
       </div>
       <div class="slide-item">
         <div class="panel-page-item">
           <div class="list-header">
             <div class="left">
-              <div class="dict-name">总词数：{{ store.simple.words.length }}</div>
+              <div class="dict-name">简单词数：{{ store.simple.words.length }}</div>
               <BaseIcon icon="fluent:add-12-regular" title="添加" @click="addSimple"/>
             </div>
             <template v-if="store.currentDict.type !== DictType.simple && store.simple.words.length">
@@ -163,7 +166,7 @@ const showCollectToggleButton = $computed(() => {
       <div class="slide-item">
         <div class="panel-page-item" v-if="store.wrong.words.length">
           <div class="list-header">
-            <div class="dict-name">总词数：{{ store.wrong.words.length }}</div>
+            <div class="dict-name">错词数：{{ store.wrong.words.length }}</div>
             <template
                 v-if="store.currentDict.type !== DictType.wrong && store.wrong.words.length">
               <PopConfirm
@@ -188,6 +191,9 @@ const showCollectToggleButton = $computed(() => {
         </div>
         <Empty v-else/>
       </div>
+      <div class="slide-item">
+        <MobileStats />
+      </div>
     </Slide>
   </div>
 </template>
@@ -196,7 +202,7 @@ const showCollectToggleButton = $computed(() => {
 
 $header-height: 50rem;
 .slide-item {
-  width: 25%;
+  width: 20%;
   height: 100%;
 }
 
@@ -211,7 +217,6 @@ $header-height: 50rem;
   z-index: 1;
   border: 1px solid var(--color-item-border);
   box-shadow: var(--shadow);
-
 
   & > header {
     min-height: 50rem;
@@ -240,12 +245,51 @@ $header-height: 50rem;
         font-size: 16rem;
         transition: all .3s;
         color: gray;
+        padding: 8rem 12rem;
+        border-radius: 6rem;
+        user-select: none;
 
         &.active {
           color: var(--color-main-active);
           font-weight: bold;
+          background: var(--color-item-active);
+        }
+        
+        &:active {
+          transform: scale(0.95);
         }
       }
+    }
+  }
+  
+  .panel-page-item {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    
+    .list-header {
+      padding: 15rem;
+      border-bottom: 1px solid var(--color-item-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      
+      .left {
+        display: flex;
+        align-items: center;
+        gap: 10rem;
+        
+        .dict-name {
+          font-size: 14rem;
+          color: var(--color-font-1);
+        }
+      }
+    }
+    
+    .word-list {
+      flex: 1;
+      overflow-y: auto;
     }
   }
 }

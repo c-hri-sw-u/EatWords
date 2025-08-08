@@ -76,7 +76,7 @@ onMounted(() => {
   if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
     // 当前设备是移动设备
     console.log('当前设备是移动设备')
-    // router.replace('/mobile')
+    router.replace('/mobile')
   }
 })
 </script>

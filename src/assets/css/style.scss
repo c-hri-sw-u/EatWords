@@ -434,3 +434,93 @@ footer {
   justify-content: center;
   align-items: center;
 }
+
+// 移动端优化
+@media (max-width: 768px) {
+  :root {
+    --space: 15rem;
+    --radius: 6rem;
+  }
+  
+  // 移动端触摸优化
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  // 允许文本选择
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  
+  // 移动端滚动优化
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+  
+  // 移动端按钮优化
+  .base-button {
+    min-height: 44rem; // 确保触摸目标足够大
+    touch-action: manipulation;
+  }
+  
+  // 移动端图标优化
+  .base-icon {
+    min-width: 44rem;
+    min-height: 44rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  // 移动端对话框优化
+  .el-dialog {
+    width: 90% !important;
+    max-width: 400rem;
+    margin: 5vh auto !important;
+  }
+  
+  // 移动端列表优化
+  .word-list {
+    .word-item {
+      padding: 15rem;
+      min-height: 60rem;
+      
+      &:active {
+        background: var(--color-item-active);
+      }
+    }
+  }
+  
+  // 移动端面板优化
+  .panel {
+    .tabs {
+      .tab {
+        min-height: 44rem;
+        min-width: 60rem;
+      }
+    }
+  }
+}
+
+// 超小屏幕优化
+@media (max-width: 480px) {
+  :root {
+    --space: 10rem;
+    --radius: 4rem;
+  }
+  
+  .base-button {
+    min-height: 48rem;
+    font-size: 16rem;
+  }
+  
+  .base-icon {
+    min-width: 48rem;
+    min-height: 48rem;
+  }
+}
