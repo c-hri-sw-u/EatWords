@@ -62,6 +62,14 @@ const settingStore = useSettingStore()
     opacity: 0.8;
     filter: grayscale(0.5);
   }
+  
+  :deep(.icon-wrapper) {
+    color: #666 !important;
+    
+    &:hover {
+      color: #888 !important;
+    }
+  }
 }
 
 </style>
