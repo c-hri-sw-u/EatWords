@@ -1,0 +1,24 @@
+{
+  "name": "TypeWords - 单词学习",
+  "short_name": "TypeWords",
+  "description": "一个现代化的单词学习应用",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E6E8EB",
+  "theme_color": "#0C8CE9",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "zh-CN"
+} 
