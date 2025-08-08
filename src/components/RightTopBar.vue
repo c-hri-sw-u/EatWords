@@ -33,6 +33,13 @@ const settingStore = useSettingStore()
           title="Github地址"
           icon="mdi:github"/>
     </a>
+
+    <a href="https://github.com/zyronon/TypeWords" target="_blank">
+      <BaseIcon
+          title="原项目地址"
+          icon="mdi:github"
+          class="original-github"/>
+    </a>
   </div>
 </template>
 
@@ -45,6 +52,16 @@ const settingStore = useSettingStore()
   z-index: 1;
   display: flex;
   gap: 10rem;
+}
+
+.original-github {
+  opacity: 0.6;
+  filter: grayscale(1);
+  
+  &:hover {
+    opacity: 0.8;
+    filter: grayscale(0.5);
+  }
 }
 
 </style>
