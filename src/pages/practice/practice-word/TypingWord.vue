@@ -203,6 +203,20 @@ function next(isTyping: boolean = true) {
     isTyping && practiceStore.inputWordNumber++
     console.log('这个词完了')
     
+    // 重置例句相关状态
+    showSentence = false
+    currentSentence = ''
+    loadingSentence = false
+    sentenceError = ''
+    wordCompleted = false
+    
+    // 重置造句相关状态
+    showCreation = false
+    showEvaluation = false
+    evaluationLoading = false
+    currentEvaluation = { score: 0, feedback: '' }
+    userCreatedSentence = ''
+    
     // 检查当前词是否在跳过列表中
     if (store.skipWordNames.includes(word.name.toLowerCase())) {
       // 如果当前词在跳过列表中，递归调用next跳过它
@@ -270,10 +284,21 @@ function onWordComplete() {
     showSentence = true
   } else if (!settingStore.enableSentencePractice) {
     // 如果没有启用例句练习，直接进入下一个单词
-    proceedToNextWord()
+    next()
   } else {
-    // 如果启用了例句练习但没有例句，也进入下一个单词
-    proceedToNextWord()
+    // 如果启用了例句练习但没有例句，等待例句生成或直接进入下一个单词
+    if (loadingSentence) {
+      // 如果正在加载例句，等待加载完成
+      console.log('等待例句生成...')
+    } else if (sentenceError) {
+      // 如果例句生成失败，直接进入下一个单词
+      console.log('例句生成失败，进入下一个单词')
+      next()
+    } else {
+      // 如果没有例句且没有错误，可能是API配置问题，直接进入下一个单词
+      console.log('没有例句，进入下一个单词')
+      next()
+    }
   }
 }
 
@@ -281,12 +306,12 @@ function onWordComplete() {
 function onSentenceComplete() {
   showSentence = false
   
-  // 如果启用例句练习，进入造句阶段
-  if (settingStore.enableSentencePractice) {
+  // 如果启用造句练习，进入造句阶段
+  if (settingStore.enableCreationPractice) {
     showCreation = true
   } else {
     // 直接进入下一个单词
-    proceedToNextWord()
+    next()
   }
 }
 
@@ -314,7 +339,7 @@ async function onCreationComplete(userSentence: string) {
 // 跳过造句
 function onCreationSkip() {
   showCreation = false
-  proceedToNextWord()
+  next()
 }
 
 // 重新造句
@@ -328,7 +353,7 @@ function onEvaluationRetry() {
 // 评价完成，继续练习
 function onEvaluationContinue() {
   showEvaluation = false
-  proceedToNextWord()
+  next()
 }
 
 // 当评价显示时，自动滚动到可见区域
@@ -347,66 +372,7 @@ watch(() => showEvaluation, (newVal) => {
   }
 })
 
-// 进入下一个单词的统一处理
-function proceedToNextWord() {
-  currentSentence = ''
-  sentenceError = ''
-  
-  // 检查数据有效性
-  if (!data.words || data.words.length === 0) {
-    return
-  }
-  
-  console.log('例句完成，进入下一个词')
-  
-  // 例句完成后，真正进入下一个单词
-  if (data.index === data.words.length - 1) {
-    // 如果是最后一个单词，处理章节完成逻辑
-    if (stat.total === -1) {
-      let now = Date.now()
-      stat = {
-        startDate: practiceStore.startDate,
-        endDate: now,
-        spend: now - practiceStore.startDate,
-        total: props.words.length,
-        correctRate: -1,
-        inputWordNumber: practiceStore.inputWordNumber,
-        wrongWordNumber: data.wrongWords.length,
-        wrongWords: data.wrongWords,
-      }
-      stat.correctRate = 100 - Math.trunc(((stat.wrongWordNumber) / (stat.total)) * 100)
-    }
 
-    if (data.wrongWords.length) {
-      console.log('当前背完了，但还有错词')
-      data.words = cloneDeep(data.wrongWords)
-
-      practiceStore.total = data.words.length
-      practiceStore.index = data.index = 0
-      practiceStore.inputWordNumber = 0
-      practiceStore.wrongWordNumber = 0
-      practiceStore.repeatNumber++
-      data.wrongWords = []
-    } else {
-      console.log('这章节完了')
-      practiceStore.inputWordNumber++
-
-      let now = Date.now()
-      stat.endDate = now
-      stat.spend = now - stat.startDate
-
-      emitter.emit(EventKey.openStatModal, stat)
-    }
-  } else {
-    // 正常进入下一个单词
-    data.index++
-    practiceStore.inputWordNumber++
-    console.log('例句完成，进入下一个词')
-    if (store.skipWordNames.includes(data.words[data.index].name.toLowerCase())) {
-      next(false) // 递归跳过，不计入打字数
-    }
-  }
-}
 
 function wordWrong() {
   if (!store.wrong.originWords.find((v: Word) => v.name.toLowerCase() === word.name.toLowerCase())) {
