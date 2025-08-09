@@ -293,30 +293,41 @@ async function preloadSentence(targetWord: any) {
 
 // 单词完成处理
 async function onWordComplete() {
+  console.log('onWordComplete 被调用')
+  console.log('settingStore.enableSentencePractice:', settingStore.enableSentencePractice)
+  console.log('currentSentence:', currentSentence)
+  console.log('showSentence:', showSentence)
+  
   wordCompleted = true
   
   if (settingStore.enableSentencePractice) {
     // 如果启用了例句练习
     if (currentSentence) {
       // 如果已经有例句，直接显示
+      console.log('有例句，显示例句练习')
       showSentence = true
     } else {
       // 如果没有例句，尝试生成一个
+      console.log('没有例句，尝试生成')
       const currentWord = data.words?.[data.index]
       if (currentWord && currentWord.name) {
         await preloadSentence(currentWord)
         if (currentSentence) {
+          console.log('例句生成成功，显示例句练习')
           showSentence = true
         } else {
           // 生成失败，直接进入下一个单词
+          console.log('例句生成失败，进入下一个单词')
           proceedToNextWord()
         }
       } else {
+        console.log('当前单词无效，进入下一个单词')
         proceedToNextWord()
       }
     }
   } else {
     // 如果没有启用例句练习，直接进入下一个单词
+    console.log('例句练习未启用，进入下一个单词')
     proceedToNextWord()
   }
 }
