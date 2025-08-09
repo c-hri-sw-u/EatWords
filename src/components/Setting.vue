@@ -1035,10 +1035,13 @@ async function testApiKey() {
 .ai-config-container {
   padding: 20rem;
   max-width: 800rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .config-section {
   margin-bottom: 32rem;
+  width: 100%;
 
   .section-header {
     margin-bottom: 24rem;
@@ -1143,6 +1146,7 @@ async function testApiKey() {
   border-radius: 12rem;
   overflow: hidden;
   margin-bottom: 24rem;
+  width: 100%;
   
   .config-item {
     padding: 20rem 24rem;
