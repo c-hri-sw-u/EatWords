@@ -595,20 +595,18 @@ async function testApiKey() {
                 <el-radio label="deepseek" class="model-radio">
                   <div class="model-info">
                     <span class="model-name">DeepSeek</span>
-                    <span class="model-badge premium">付费</span>
                     <span class="model-badge quality">质量高</span>
                   </div>
-                  <p class="model-desc">专业AI模型，响应快速，例句质量优秀</p>
+                  <p class="model-desc">国内模型</p>
                 </el-radio>
               </div>
               <div class="model-option">
                 <el-radio label="qwen" class="model-radio">
                   <div class="model-info">
                     <span class="model-name">Qwen</span>
-                    <span class="model-badge alternative">替代方案</span>
-                    <span class="model-badge provider">HuggingFace</span>
+                    <span class="model-badge alternative">HuggingFace</span>
                   </div>
-                  <p class="model-desc">开源模型，通过HuggingFace提供，可作为DeepSeek的替代方案</p>
+                  <p class="model-desc">通过HuggingFace提供</p>
                 </el-radio>
               </div>
             </el-radio-group>
