@@ -293,41 +293,30 @@ async function preloadSentence(targetWord: any) {
 
 // 单词完成处理
 async function onWordComplete() {
-  console.log('onWordComplete 被调用')
-  console.log('settingStore.enableSentencePractice:', settingStore.enableSentencePractice)
-  console.log('currentSentence:', currentSentence)
-  console.log('showSentence:', showSentence)
-  
   wordCompleted = true
   
   if (settingStore.enableSentencePractice) {
     // 如果启用了例句练习
     if (currentSentence) {
       // 如果已经有例句，直接显示
-      console.log('有例句，显示例句练习')
       showSentence = true
     } else {
       // 如果没有例句，尝试生成一个
-      console.log('没有例句，尝试生成')
       const currentWord = data.words?.[data.index]
       if (currentWord && currentWord.name) {
         await preloadSentence(currentWord)
         if (currentSentence) {
-          console.log('例句生成成功，显示例句练习')
           showSentence = true
         } else {
           // 生成失败，直接进入下一个单词
-          console.log('例句生成失败，进入下一个单词')
           proceedToNextWord()
         }
       } else {
-        console.log('当前单词无效，进入下一个单词')
         proceedToNextWord()
       }
     }
   } else {
     // 如果没有启用例句练习，直接进入下一个单词
-    console.log('例句练习未启用，进入下一个单词')
     proceedToNextWord()
   }
 }
@@ -340,7 +329,7 @@ function onSentenceComplete() {
   if (settingStore.enableCreationPractice) {
     showCreation = true
   } else {
-    // 直接进入下一个单词
+    // 立即进入下一个单词，不等待语音
     proceedToNextWord()
   }
 }
@@ -404,15 +393,20 @@ watch(() => showEvaluation, (newVal) => {
 
 // 进入下一个单词的统一处理
 function proceedToNextWord() {
+  // 重置状态
   currentSentence = ''
   sentenceError = ''
+  wordCompleted = false
+  showSentence = false
+  showCreation = false
+  showEvaluation = false
+  userCreatedSentence = ''
+  currentEvaluation = { score: 0, feedback: '' }
   
   // 检查数据有效性
   if (!data.words || data.words.length === 0) {
     return
   }
-  
-  console.log('例句完成，进入下一个词')
   
   // 例句完成后，真正进入下一个单词
   if (data.index === data.words.length - 1) {
@@ -456,7 +450,7 @@ function proceedToNextWord() {
     // 正常进入下一个单词
     data.index++
     practiceStore.inputWordNumber++
-    console.log('例句完成，进入下一个词')
+
     if (store.skipWordNames.includes(data.words[data.index].name.toLowerCase())) {
       next(false) // 递归跳过，不计入打字数
     }
