@@ -270,6 +270,10 @@ async function testApiKey() {
           <Icon icon="icon-park-outline:setting-config" width="20" color="#0C8CE9"/>
           <span>其他设置</span>
         </div>
+        <div class="tab" :class="tabIndex === 5 && 'active'" @click="tabIndex = 5">
+          <Icon icon="mdi:school" width="20" color="#0C8CE9"/>
+          <span>学习模式</span>
+        </div>
         <div class="tab" :class="tabIndex === 4 && 'active'" @click="tabIndex = 4">
           <Icon icon="ri:openai-line" width="20" color="#0C8CE9"/>
           <span>AI配置</span>
@@ -517,20 +521,7 @@ async function testApiKey() {
       <div class="desc">
         默写时用下划线 _ 来显示每个字符。关闭后，用空格代替，用户将无法判断单词长度
       </div>
-      <div class="line"></div>
-      <div class="row">
-        <label class="item-title">启用例句练习</label>
-        <div class="wrapper">
-          <el-switch v-model="settingStore.enableSentencePractice"
-                      inline-prompt
-                      active-text="开"
-                      inactive-text="关"
-          />
-        </div>
-      </div>
-      <div class="desc">
-        开启后，每个单词练习完成后会自动生成例句进行练习。需要配置 DeepSeek API Key（在 AI配置 选项卡中）
-      </div>
+
     </div>
     <div class="body" v-if="tabIndex === 2">
       <div class="row">
@@ -557,6 +548,38 @@ async function testApiKey() {
         <div class="wrapper">
           <BaseButton @click="resetShortcutKeyMap">恢复默认</BaseButton>
         </div>
+      </div>
+    </div>
+    <div v-if="tabIndex === 5">
+      <div class="row">
+        <label class="main-title">学习模式设置</label>
+      </div>
+      <div class="row">
+        <label class="item-title">启用例句练习</label>
+        <div class="wrapper">
+          <el-switch v-model="settingStore.enableSentencePractice"
+                      inline-prompt
+                      active-text="开"
+                      inactive-text="关"
+          />
+        </div>
+      </div>
+      <div class="desc">
+        开启后，每个单词练习完成后会自动生成例句进行练习。需要配置 AI API Key（在 AI配置 选项卡中）
+      </div>
+      <div class="line"></div>
+      <div class="row">
+        <label class="item-title">启用造句练习</label>
+        <div class="wrapper">
+          <el-switch v-model="settingStore.enableCreationPractice"
+                      inline-prompt
+                      active-text="开"
+                      inactive-text="关"
+          />
+        </div>
+      </div>
+      <div class="desc">
+        开启后，完成例句练习后会进入造句练习环节，让您用刚学的单词造句，AI会给出评分和建议
       </div>
     </div>
     <div v-if="tabIndex === 4">

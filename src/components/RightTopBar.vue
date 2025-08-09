@@ -70,6 +70,10 @@ const settingStore = useSettingStore()
       color: #888 !important;
     }
   }
+  
+  :deep(svg) {
+    color: #666 !important;
+  }
 }
 
 </style>
