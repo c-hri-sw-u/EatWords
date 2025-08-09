@@ -605,10 +605,10 @@ async function testApiKey() {
                 <el-radio label="qwen" class="model-radio">
                   <div class="model-info">
                     <span class="model-name">Qwen</span>
-                    <span class="model-badge free">免费</span>
+                    <span class="model-badge alternative">替代方案</span>
                     <span class="model-badge provider">HuggingFace</span>
                   </div>
-                  <p class="model-desc">开源免费模型，功能完整，适合日常学习</p>
+                  <p class="model-desc">开源模型，通过HuggingFace提供，可作为DeepSeek的替代方案</p>
                 </el-radio>
               </div>
             </el-radio-group>
@@ -716,7 +716,7 @@ async function testApiKey() {
       <div v-else-if="settingStore.aiModel === 'qwen'" class="config-section">
         <div class="section-header">
           <h3 class="section-title">Qwen API 配置</h3>
-          <p class="section-desc">配置 HuggingFace Token 以使用免费的 Qwen 模型</p>
+          <p class="section-desc">配置 HuggingFace Token 以使用 Qwen 模型</p>
         </div>
         
         <div class="api-config-card">
@@ -800,10 +800,10 @@ async function testApiKey() {
         <div class="feature-info">
           <h4 class="feature-title">功能说明</h4>
           <ul class="feature-list">
-            <li>使用 HuggingFace 提供的免费 Qwen 3.5 模型</li>
+            <li>使用 HuggingFace 提供的 Qwen 3.5 模型</li>
             <li>功能与 DeepSeek 完全相同：自动生成例句和造句评分</li>
-            <li>完全免费，但可能响应速度稍慢</li>
-            <li>需要注册 HuggingFace 账号并获取免费 Token</li>
+            <li>可作为 DeepSeek 的替代方案，但可能响应速度稍慢</li>
+            <li>需要注册 HuggingFace 账号并获取 Token</li>
           </ul>
         </div>
       </div>
@@ -1116,8 +1116,8 @@ async function testApiKey() {
           color: white;
         }
         
-        &.free {
-          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        &.alternative {
+          background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
           color: white;
         }
         

@@ -26,7 +26,7 @@
 ### 🆕 新增功能 (2025年8月7日)
 
 #### 1. **例句练习功能**
-- 自动生成英文例句：支持DeepSeek API和免费Qwen模型
+- 自动生成英文例句：支持DeepSeek API和Qwen模型（HuggingFace）
 - 逐字符打字练习：模仿单词打字的体验
 - 防单词截断：确保例句中的单词不会被换行截断
 - 自动朗读：例句完成后自动朗读，加深记忆
@@ -107,7 +107,7 @@ Github Pages: <https://c-hri-sw-u.github.io/EatWords/>
    # DeepSeek API (推荐)
    VITE_DEEPSEEK_API_KEY=your_deepseek_api_key_here
    
-   # 或使用免费Qwen模型
+   # 或使用Qwen模型（HuggingFace）
    VITE_HF_TOKEN=your_huggingface_token_here
    ```
 
