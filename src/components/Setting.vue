@@ -582,202 +582,229 @@ async function testApiKey() {
         开启后，完成例句练习后会进入造句练习环节，让您用刚学的单词造句，AI会给出评分和建议
       </div>
     </div>
-    <div v-if="tabIndex === 4">
-        <div class="row">
-          <label class="main-title">AI 模型选择</label>
-        </div>
-        
-        <div class="row">
-          <label class="item-title">选择 AI 模型</label>
-          <div class="wrapper">
-            <el-radio-group v-model="settingStore.aiModel">
-              <el-radio label="deepseek">DeepSeek（付费，质量高）</el-radio>
-              <el-radio label="qwen">Qwen（免费，由HuggingFace提供）</el-radio>
-            </el-radio-group>
-
+    <div v-if="tabIndex === 4" class="ai-config-container">
+        <div class="config-section">
+          <div class="section-header">
+            <h3 class="section-title">AI 模型选择</h3>
+            <p class="section-desc">选择您要使用的AI模型来生成例句和评分造句</p>
           </div>
-        </div>
-        
-        <div class="row">
-          <label class="main-title">API 配置</label>
+          
+          <div class="model-selection">
+            <el-radio-group v-model="settingStore.aiModel" class="model-options">
+              <div class="model-option">
+                <el-radio label="deepseek" class="model-radio">
+                  <div class="model-info">
+                    <span class="model-name">DeepSeek</span>
+                    <span class="model-badge premium">付费</span>
+                    <span class="model-badge quality">质量高</span>
+                  </div>
+                  <p class="model-desc">专业AI模型，响应快速，例句质量优秀</p>
+                </el-radio>
+              </div>
+              <div class="model-option">
+                <el-radio label="qwen" class="model-radio">
+                  <div class="model-info">
+                    <span class="model-name">Qwen</span>
+                    <span class="model-badge free">免费</span>
+                    <span class="model-badge provider">HuggingFace</span>
+                  </div>
+                  <p class="model-desc">开源免费模型，功能完整，适合日常学习</p>
+                </el-radio>
+              </div>
+            </el-radio-group>
+          </div>
         </div>
         
         
         <!-- DeepSeek API 配置 -->
-        <div v-if="settingStore.aiModel === 'deepseek'">
-          <div class="row">
-            <label class="main-title">DeepSeek API 配置</label>
+        <div v-if="settingStore.aiModel === 'deepseek'" class="config-section">
+          <div class="section-header">
+            <h3 class="section-title">DeepSeek API 配置</h3>
+            <p class="section-desc">配置 DeepSeek API Key 以启用自动例句生成功能</p>
           </div>
-        <div class="row">
-          <label class="sub-title">
-            配置 DeepSeek API Key 以启用自动例句生成功能。每个单词完成后会自动生成一个简单、有趣的英文例句进行练习。
-          </label>
-        </div>
-        <div class="row">
-          <label class="item-title">获取 API Key</label>
-          <div class="wrapper">
-            <a href="https://platform.deepseek.com/" target="_blank" rel="noopener">
-              访问 DeepSeek 官网
-            </a>
+          
+          <div class="api-config-card">
+            <div class="config-item">
+              <label class="config-label">获取 API Key</label>
+              <div class="config-content">
+                <a href="https://platform.deepseek.com/" target="_blank" rel="noopener" class="external-link">
+                  <Icon icon="mdi:open-in-new" width="16" />
+                  访问 DeepSeek 官网
+                </a>
+              </div>
+            </div>
+            
+            <div class="config-item">
+              <label class="config-label">API Key</label>
+              <div class="config-content">
+                <div class="api-input-group">
+                  <el-input
+                    v-model="apiKey"
+                    type="password"
+                    placeholder="请输入您的 DeepSeek API Key"
+                    show-password
+                    clearable
+                    @keyup.enter="saveApiKey"
+                    class="api-input"
+                  />
+                  <div class="status-indicator" v-if="apiKeyStatus">
+                    <Icon 
+                      v-if="apiKeyStatus === 'valid'" 
+                      icon="mdi:check-circle" 
+                      width="20" 
+                      color="#67C23A"
+                      title="API Key 有效"
+                    />
+                    <Icon 
+                      v-if="apiKeyStatus === 'invalid'" 
+                      icon="mdi:close-circle" 
+                      width="20" 
+                      color="#F56C6C"
+                      title="API Key 无效"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="config-item">
+              <label class="config-label">操作</label>
+              <div class="config-content">
+                <div class="button-group">
+                  <BaseButton 
+                    @click="testApiKey" 
+                    :loading="apiKeyValidating"
+                    size="small"
+                  >
+                    {{ apiKeyValidating ? '测试中...' : '测试' }}
+                  </BaseButton>
+                  <BaseButton 
+                    @click="saveApiKey" 
+                    type="primary"
+                    :loading="apiKeyValidating"
+                    size="small"
+                  >
+                    {{ apiKeyValidating ? '保存中...' : '保存' }}
+                  </BaseButton>
+                  <BaseButton 
+                    @click="clearApiKeyAction" 
+                    plain
+                    size="small"
+                  >
+                    清除
+                  </BaseButton>
+                </div>
+                <p class="config-hint">
+                  您也可以通过设置环境变量 <code>VITE_DEEPSEEK_API_KEY</code> 来配置 API Key
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="feature-info">
+            <h4 class="feature-title">功能说明</h4>
+            <ul class="feature-list">
+              <li>每个单词练习完成后，会自动生成一个包含该单词的英文例句</li>
+              <li>例句风格：简单易懂、经典常用、不需要中文翻译也能理解</li>
+              <li>需要完整打完例句才能进入下一个单词的练习</li>
+              <li>如果API调用失败，会使用内置的备用例句模板</li>
+            </ul>
           </div>
         </div>
-        <div class="line"></div>
-        <div class="row">
-          <label class="item-title">API Key</label>
-          <div class="wrapper api-input">
-            <el-input
-              v-model="apiKey"
-              type="password"
-              placeholder="请输入您的 DeepSeek API Key"
-              show-password
-              clearable
-              @keyup.enter="saveApiKey"
-            />
-            <Icon 
-              v-if="apiKeyStatus === 'valid'" 
-              icon="mdi:check-circle" 
-              width="20" 
-              color="#67C23A"
-              title="API Key 有效"
-            />
-            <Icon 
-              v-if="apiKeyStatus === 'invalid'" 
-              icon="mdi:close-circle" 
-              width="20" 
-              color="#F56C6C"
-              title="API Key 无效"
-            />
-          </div>
-        </div>
-        <div class="row">
-          <label class="item-title">操作</label>
-          <div class="wrapper button-group">
-            <BaseButton 
-              @click="testApiKey" 
-              :loading="apiKeyValidating"
-              size="small"
-            >
-              {{ apiKeyValidating ? '测试中...' : '测试' }}
-            </BaseButton>
-            <BaseButton 
-              @click="saveApiKey" 
-              type="primary"
-              :loading="apiKeyValidating"
-              size="small"
-            >
-              {{ apiKeyValidating ? '保存中...' : '保存' }}
-            </BaseButton>
-            <BaseButton 
-              @click="clearApiKeyAction" 
-              plain
-              size="small"
-            >
-              清除
-            </BaseButton>
-          </div>
-        </div>
-        <div class="desc">
-          您也可以通过设置环境变量 <code>VITE_DEEPSEEK_API_KEY</code> 来配置 API Key。
-        </div>
-        <div class="line"></div>
-        <div class="row">
-          <label class="item-title">功能说明</label>
-        </div>
-        <div class="desc">
-          • 每个单词练习完成后，会自动生成一个包含该单词的英文例句<br>
-          • 例句风格：简单易懂、经典常用、不需要中文翻译也能理解<br>
-          • 需要完整打完例句才能进入下一个单词的练习<br>
-          • 如果API调用失败，会使用内置的备用例句模板
-        </div>
-      </div>
       
       <!-- Qwen API 配置 -->
-      <div v-else-if="settingStore.aiModel === 'qwen'">
-        <div class="row">
-          <label class="main-title">Qwen API 配置</label>
+      <div v-else-if="settingStore.aiModel === 'qwen'" class="config-section">
+        <div class="section-header">
+          <h3 class="section-title">Qwen API 配置</h3>
+          <p class="section-desc">配置 HuggingFace Token 以使用免费的 Qwen 模型</p>
         </div>
-        <div class="row">
-          <label class="sub-title">
-            配置 HuggingFace Token 以使用免费的 Qwen 模型。功能与 DeepSeek 相同，但完全免费。
-          </label>
-        </div>
-        <div class="row">
-          <label class="item-title">获取 Token</label>
-          <div class="wrapper">
-            <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener">
-              访问 HuggingFace 获取 Token
-            </a>
+        
+        <div class="api-config-card">
+          <div class="config-item">
+            <label class="config-label">获取 Token</label>
+            <div class="config-content">
+              <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener" class="external-link">
+                <Icon icon="mdi:open-in-new" width="16" />
+                访问 HuggingFace 获取 Token
+              </a>
+            </div>
           </div>
-        </div>
-        <div class="line"></div>
-        <div class="row">
-          <label class="item-title">HuggingFace Token</label>
-          <div class="wrapper api-input">
-            <el-input
-              v-model="hfToken"
-              type="password"
-              placeholder="请输入您的 HuggingFace Token"
-              show-password
-              style="width: 300rem;"
-            />
-            <div v-if="hfTokenStatus" class="status-indicator">
-              <Icon 
-                v-if="hfTokenStatus === 'valid'" 
-                icon="mdi:check-circle" 
-                color="#52c41a" 
-                width="20" 
-              />
-              <Icon 
-                v-else-if="hfTokenStatus === 'invalid'" 
-                icon="mdi:close-circle" 
-                color="#ff4d4f" 
-                width="20" 
-              />
-              <span :class="['status-text', hfTokenStatus]">
-                {{ hfTokenStatus === 'valid' ? '有效' : '无效' }}
-              </span>
+          
+          <div class="config-item">
+            <label class="config-label">HuggingFace Token</label>
+            <div class="config-content">
+              <div class="api-input-group">
+                <el-input
+                  v-model="hfToken"
+                  type="password"
+                  placeholder="请输入您的 HuggingFace Token"
+                  show-password
+                  clearable
+                  class="api-input"
+                />
+                <div class="status-indicator" v-if="hfTokenStatus">
+                  <Icon 
+                    v-if="hfTokenStatus === 'valid'" 
+                    icon="mdi:check-circle" 
+                    color="#67C23A" 
+                    width="20" 
+                  />
+                  <Icon 
+                    v-else-if="hfTokenStatus === 'invalid'" 
+                    icon="mdi:close-circle" 
+                    color="#F56C6C" 
+                    width="20" 
+                  />
+                  <span :class="['status-text', hfTokenStatus]">
+                    {{ hfTokenStatus === 'valid' ? '有效' : '无效' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="config-item">
+            <label class="config-label">操作</label>
+            <div class="config-content">
+              <div class="button-group">
+                <BaseButton 
+                  @click="testHfToken" 
+                  :loading="hfTokenValidating"
+                  size="small"
+                >
+                  {{ hfTokenValidating ? '测试中...' : '测试' }}
+                </BaseButton>
+                <BaseButton 
+                  @click="saveHfToken" 
+                  type="primary"
+                  :loading="hfTokenValidating"
+                  size="small"
+                >
+                  {{ hfTokenValidating ? '保存中...' : '保存' }}
+                </BaseButton>
+                <BaseButton 
+                  @click="clearHfTokenAction" 
+                  plain
+                  size="small"
+                >
+                  清除
+                </BaseButton>
+              </div>
+              <p class="config-hint">
+                您也可以通过设置环境变量 <code>VITE_HF_TOKEN</code> 来配置 Token
+              </p>
             </div>
           </div>
         </div>
-        <div class="row">
-          <label class="item-title">操作</label>
-          <div class="wrapper button-group">
-            <BaseButton 
-              @click="testHfToken" 
-              :loading="hfTokenValidating"
-              size="small"
-            >
-              {{ hfTokenValidating ? '测试中...' : '测试' }}
-            </BaseButton>
-            <BaseButton 
-              @click="saveHfToken" 
-              type="primary"
-              :loading="hfTokenValidating"
-              size="small"
-            >
-              {{ hfTokenValidating ? '保存中...' : '保存' }}
-            </BaseButton>
-            <BaseButton 
-              @click="clearHfTokenAction" 
-              plain
-              size="small"
-            >
-              清除
-            </BaseButton>
-          </div>
-        </div>
-        <div class="desc">
-          您也可以通过设置环境变量 <code>VITE_HF_TOKEN</code> 来配置 Token。
-        </div>
-        <div class="line"></div>
-        <div class="row">
-          <label class="item-title">功能说明</label>
-        </div>
-        <div class="desc">
-          • 使用 HuggingFace 提供的免费 Qwen 3.5 模型<br>
-          • 功能与 DeepSeek 完全相同：自动生成例句和造句评分<br>
-          • 完全免费，但可能响应速度稍慢<br>
-          • 需要注册 HuggingFace 账号并获取免费 Token
+        
+        <div class="feature-info">
+          <h4 class="feature-title">功能说明</h4>
+          <ul class="feature-list">
+            <li>使用 HuggingFace 提供的免费 Qwen 3.5 模型</li>
+            <li>功能与 DeepSeek 完全相同：自动生成例句和造句评分</li>
+            <li>完全免费，但可能响应速度稍慢</li>
+            <li>需要注册 HuggingFace 账号并获取免费 Token</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -1001,6 +1028,226 @@ async function testApiKey() {
     height: 100%;
     width: 100%;
     opacity: 0;
+  }
+}
+
+// AI配置页面样式
+.ai-config-container {
+  padding: 20rem;
+  max-width: 800rem;
+}
+
+.config-section {
+  margin-bottom: 32rem;
+
+  .section-header {
+    margin-bottom: 24rem;
+    
+    .section-title {
+      font-size: 20rem;
+      font-weight: 600;
+      margin: 0 0 8rem 0;
+      color: var(--color-font-1);
+    }
+    
+    .section-desc {
+      font-size: 14rem;
+      color: var(--color-font-3);
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}
+
+.model-selection {
+  .model-options {
+    display: flex;
+    flex-direction: column;
+    gap: 16rem;
+  }
+  
+  .model-option {
+    border: 2rem solid var(--color-bg-3);
+    border-radius: 8rem;
+    padding: 20rem;
+    transition: all 0.3s ease;
+    background: var(--color-bg-1);
+    
+    &:hover {
+      border-color: var(--el-color-primary-light-7);
+      box-shadow: 0 2rem 8rem rgba(64, 158, 255, 0.1);
+    }
+    
+    .model-radio {
+      width: 100%;
+      margin: 0;
+      
+      :deep(.el-radio__label) {
+        width: 100%;
+        padding-left: 16rem;
+      }
+    }
+    
+    .model-info {
+      display: flex;
+      align-items: center;
+      gap: 12rem;
+      margin-bottom: 8rem;
+      
+      .model-name {
+        font-size: 16rem;
+        font-weight: 500;
+        color: var(--color-font-1);
+      }
+      
+      .model-badge {
+        padding: 2rem 8rem;
+        border-radius: 12rem;
+        font-size: 12rem;
+        font-weight: 500;
+        
+        &.premium {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+        }
+        
+        &.quality {
+          background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+          color: white;
+        }
+        
+        &.free {
+          background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+          color: white;
+        }
+        
+        &.provider {
+          background: var(--color-bg-3);
+          color: var(--color-font-2);
+        }
+      }
+    }
+    
+    .model-desc {
+      font-size: 13rem;
+      color: var(--color-font-3);
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+}
+
+.api-config-card {
+  background: var(--color-bg-1);
+  border: 1rem solid var(--color-bg-3);
+  border-radius: 12rem;
+  overflow: hidden;
+  margin-bottom: 24rem;
+  
+  .config-item {
+    padding: 20rem 24rem;
+    border-bottom: 1rem solid var(--color-bg-3);
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    .config-label {
+      display: block;
+      font-size: 14rem;
+      font-weight: 500;
+      color: var(--color-font-1);
+      margin-bottom: 12rem;
+    }
+    
+    .config-content {
+      .external-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6rem;
+        color: var(--el-color-primary);
+        text-decoration: none;
+        font-size: 14rem;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      
+      .api-input-group {
+        display: flex;
+        align-items: center;
+        gap: 12rem;
+        
+        .api-input {
+          flex: 1;
+          max-width: 400rem;
+        }
+        
+        .status-indicator {
+          display: flex;
+          align-items: center;
+          gap: 6rem;
+          
+          .status-text {
+            font-size: 13rem;
+            font-weight: 500;
+            
+            &.valid {
+              color: #67C23A;
+            }
+            
+            &.invalid {
+              color: #F56C6C;
+            }
+          }
+        }
+      }
+      
+      .button-group {
+        display: flex;
+        gap: 12rem;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 12rem;
+      }
+      
+      .config-hint {
+        font-size: 12rem;
+        color: var(--color-font-3);
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+  }
+}
+
+.feature-info {
+  background: var(--color-bg-2);
+  border-radius: 8rem;
+  padding: 20rem;
+  
+  .feature-title {
+    font-size: 16rem;
+    font-weight: 500;
+    color: var(--color-font-1);
+    margin: 0 0 16rem 0;
+  }
+  
+  .feature-list {
+    margin: 0;
+    padding-left: 20rem;
+    
+    li {
+      font-size: 13rem;
+      color: var(--color-font-2);
+      line-height: 1.6;
+      margin-bottom: 8rem;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 
