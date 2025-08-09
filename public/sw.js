@@ -1,4 +1,4 @@
-const CACHE_NAME = 'typewords-v1';
+const CACHE_NAME = 'eatwords-v1';
 const urlsToCache = [
   '/',
   '/index.html',
